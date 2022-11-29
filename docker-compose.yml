@@ -1,0 +1,27 @@
+version: "3.9"
+services:
+  db_messae_server:
+    image: postgres
+    container_name: db_message_server
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=messageserver
+      - PGDATA=/var/lib/postgresql/data
+    volumes:
+      - /docker/volums/message-server/db/data:/var/lib/postgresql/data
+    expose:
+      - "5432"
+    restart: always
+  message_server:
+    image: qmbo/message-server
+    container_name: message_servser
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db_message_server:5432/messageserver
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=password
+    ports:
+      - "49001:80"
+    depends_on:
+      - db_message_server
+    restart: always
